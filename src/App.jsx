@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Typography, Button, Grid } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
-import { addTodo, deleteTodo } from "./redux/todosSlice";
+import { addTodo, deleteTodo, editTodo } from "./redux/todosSlice";
 import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 
@@ -9,8 +9,20 @@ function App() {
   const todos = useSelector((state) => state.todos);
   const dispatch = useDispatch();
 
-  const handleAddTodo = (todo) => {
-    dispatch(addTodo(todo));
+  const [editedTodo, setEditedTodo]=useState(null);
+
+  const handleAddorEditTodo = (todo) => {
+    if(!editedTodo){
+        dispatch(addTodo(todo));
+    }
+    else{
+        dispatch(editTodo(todo));
+    }
+    setEditedTodo();
+  };
+  
+  const handleEditTodo = (todo) => {
+    setEditedTodo(todo);
   };
 
   const handleDeleteTodo = (id) => {
@@ -22,8 +34,8 @@ function App() {
       <Typography variant="h3" align="center" gutterBottom>
         Todo App
       </Typography>
-      <TodoForm onSaveTodo={handleAddTodo} />
-      <TodoList todos={todos} onDeleteTodo={handleDeleteTodo} />
+      <TodoForm onSaveTodo={handleAddorEditTodo} editedTodo={editedTodo} />
+      <TodoList todos={todos} onDeleteTodo={handleDeleteTodo} onEditTodo={handleEditTodo} />
     </Container>
   );
 }
